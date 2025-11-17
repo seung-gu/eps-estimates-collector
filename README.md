@@ -125,7 +125,7 @@ Target: 385 PDFs all
 
 **Example extracted chart image**:
 
-![Extracted EPS Chart](output/preprocessing_test/20161209.png)
+<img src="output/preprocessing_test/20161209.png" alt="Extracted EPS Chart" width="600">
 
 The extracted PNG images contain the quarterly EPS chart with:
 - Quarter labels (Q1'14, Q2'14, etc.) at the bottom
@@ -171,7 +171,7 @@ Report_Date,Q1'14,Q2'14,Q3'14,Q4'14,Q1'15,...,Q1'17,Q2'17,Confidence
 
 **Visualization of extraction result**:
 
-![Final Extraction Result](output/preprocessing_test/20161209-6_bar_classification.png)
+<img src="output/preprocessing_test/20161209-6_bar_classification.png" alt="Final Extraction Result" width="600">
 
 The visualization shows:
 - **Red bounding boxes**: Quarter labels (Q1'14, Q2'14, etc.) matched with actual EPS values (dark bars)

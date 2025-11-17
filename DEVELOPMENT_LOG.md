@@ -54,7 +54,7 @@ This document tracks the development journey, experiments, challenges, and decis
    - Many text regions were missed or incorrectly identified
    - Visualization shows fragmented and missing bounding boxes
 
-   ![Tesseract OCR Detection Results](output/preprocessing_test/20161209-6_boxes_visualized.png)
+   <img src="output/preprocessing_test/20161209-6_boxes_visualized.png" alt="Tesseract OCR Detection Results" width="600">
 
 2. **Quarter Label Recognition Issues**
    - OCR often misrecognized quarter labels:
@@ -118,23 +118,23 @@ This document tracks the development journey, experiments, challenges, and decis
 The CRAFT model generates two important score maps that help understand text detection:
 
 1. **Region Score Map**: Shows character-level text region confidence
-   ![Region Score Map](output/preprocessing_test/20161209-6_region_score.png)
+   <img src="output/preprocessing_test/20161209-6_region_score.png" alt="Region Score Map" width="600">
 
 2. **Affinity Score Map**: Shows character connection confidence
-   ![Affinity Score Map](output/preprocessing_test/20161209-6_affinity_score.png)
+   <img src="output/preprocessing_test/20161209-6_affinity_score.png" alt="Affinity Score Map" width="600">
 
 **Threshold Tuning**:
 
 Different threshold combinations were tested to optimize text detection:
 
 - **Threshold 0.2, 0.2** (text_threshold=0.2, link_threshold=0.2):
-  ![Threshold 0.2, 0.2](output/preprocessing_test/20161209-6_threshold_0.2_0.2_boxes.png)
+  <img src="output/preprocessing_test/20161209-6_threshold_0.2_0.2_boxes.png" alt="Threshold 0.2, 0.2" width="600">
 
 - **Threshold 0.25, 0.25** (text_threshold=0.25, link_threshold=0.25):
-  ![Threshold 0.25, 0.25](output/preprocessing_test/20161209-6_threshold_0.25_0.25_boxes.png)
+  <img src="output/preprocessing_test/20161209-6_threshold_0.25_0.25_boxes.png" alt="Threshold 0.25, 0.25" width="600">
 
 - **Threshold 0.3, 0.3** (text_threshold=0.3, link_threshold=0.3):
-  ![Threshold 0.3, 0.3](output/preprocessing_test/20161209-6_threshold_0.3_0.3_boxes.png)
+  <img src="output/preprocessing_test/20161209-6_threshold_0.3_0.3_boxes.png" alt="Threshold 0.3, 0.3" width="600">
 
 **Threshold Tuning Results**:
 
@@ -162,7 +162,7 @@ After implementing CRAFT for text detection, we compared two OCR engines for tex
 - Recognizes text labels: `Inc:`, `&` (when whitelist is removed)
 - **Selected as the final OCR engine** for production use
 
-![EasyOCR Results (Final)](output/preprocessing_test/20161209-6_craft_ocr_easyocr.png)
+<img src="output/preprocessing_test/20161209-6_craft_ocr_easyocr.png" alt="EasyOCR Results (Final)" width="600">
 
 **Tesseract Results** (114 valid OCR results):
 - Some decimal recognition issues: `8179` instead of `81.79`
@@ -170,7 +170,7 @@ After implementing CRAFT for text detection, we compared two OCR engines for tex
 - Inconsistent decimal point handling: `35.000` vs `35.00`
 - Still struggles with some number patterns
 
-![Tesseract Results](output/preprocessing_test/20161209-6_craft_ocr_tesseract.png)
+<img src="output/preprocessing_test/20161209-6_craft_ocr_tesseract.png" alt="Tesseract Results" width="600">
 
 ### Phase 4: Google Cloud Vision API (Final Solution)
 
@@ -196,7 +196,7 @@ After implementing CRAFT for text detection, we compared two OCR engines for tex
 - Recognizes all text labels: `FACTSET`, `EARNINGS INSIGHT`, `Bottom-Up EPS`, `S&P 500`, etc.
 - **Selected as the final production solution**
 
-![Google Cloud Vision Results](output/preprocessing_test/20161209-6_google_ocr_full.png)
+<img src="output/preprocessing_test/20161209-6_google_ocr_full.png" alt="Google Cloud Vision Results" width="600">
 
 **Key Findings**:
 1. **Google Cloud Vision API outperforms all local solutions**: 149 regions detected vs 125 with CRAFT+EasyOCR
@@ -216,8 +216,8 @@ After implementing CRAFT for text detection, we compared two OCR engines for tex
 1. **Q Pattern Extraction and Normalization**:
    - Extract Q patterns from bottom 30% of image (where quarter labels are located)
    - Normalize OCR misrecognitions:
-     - `Q` → `O`, `0` (Q가 O나 0으로 인식되는 경우)
-     - `1` → `I`, `l` (1이 I나 l로 인식되는 경우)
+     - `Q` → `O`, `0` (when Q is recognized as O or 0)
+     - `1` → `I`, `l` (when 1 is recognized as I or l)
    - Pattern matching for: `Q1'17`, `Q114`, `0114`, `Q1i7y` etc.
    - Sort Q boxes by x-coordinate (left to right) for chronological order
 
@@ -240,7 +240,7 @@ After implementing CRAFT for text detection, we compared two OCR engines for tex
 - All matches are spatially correct (Q box and EPS value are vertically aligned)
 - Chronological order maintained (sorted by x-coordinate)
 
-![Coordinate-Based Matching Results](output/preprocessing_test/20161209-6_coordinate_matching.png)
+<img src="output/preprocessing_test/20161209-6_coordinate_matching.png" alt="Coordinate-Based Matching Results" width="600">
 
 **Example Matches**:
 - Q1'14: 27.85 (x_diff: 3px, y_diff: 582px)
@@ -267,46 +267,46 @@ After implementing CRAFT for text detection, we compared two OCR engines for tex
 We tested 14 different preprocessing techniques on the chart images:
 
 1. **Original Image**: Baseline for comparison
-   ![Original](output/preprocessing_test/image_preprocessing/00_original.png)
+   <img src="output/preprocessing_test/image_preprocessing/00_original.png" alt="Original" width="600">
 
 2. **Grayscale Conversion**: Convert color image to grayscale
-   ![Grayscale](output/preprocessing_test/image_preprocessing/01_grayscale.png)
+   <img src="output/preprocessing_test/image_preprocessing/01_grayscale.png" alt="Grayscale" width="600">
 
 3. **OTSU Binary**: Global thresholding using Otsu's method
-   ![OTSU Binary](output/preprocessing_test/image_preprocessing/02_otsu_binary.png)
+   <img src="output/preprocessing_test/image_preprocessing/02_otsu_binary.png" alt="OTSU Binary" width="600">
 
 4. **OTSU Binary Inverted**: Inverted OTSU thresholding
-   ![OTSU Binary Inverted](output/preprocessing_test/image_preprocessing/03_otsu_binary_inv.png)
+   <img src="output/preprocessing_test/image_preprocessing/03_otsu_binary_inv.png" alt="OTSU Binary Inverted" width="600">
 
 5. **Adaptive Threshold**: Local adaptive thresholding (Gaussian)
-   ![Adaptive Threshold](output/preprocessing_test/image_preprocessing/04_adaptive_threshold.png)
+   <img src="output/preprocessing_test/image_preprocessing/04_adaptive_threshold.png" alt="Adaptive Threshold" width="600">
 
 6. **CLAHE**: Contrast Limited Adaptive Histogram Equalization
-   ![CLAHE](output/preprocessing_test/image_preprocessing/05_clahe.png)
+   <img src="output/preprocessing_test/image_preprocessing/05_clahe.png" alt="CLAHE" width="600">
 
 7. **Histogram Equalization**: Global histogram equalization
-   ![Histogram Equalization](output/preprocessing_test/image_preprocessing/06_histogram_equalization.png)
+   <img src="output/preprocessing_test/image_preprocessing/06_histogram_equalization.png" alt="Histogram Equalization" width="600">
 
 8. **Gaussian Blur**: Noise reduction using Gaussian filter
-   ![Gaussian Blur](output/preprocessing_test/image_preprocessing/07_gaussian_blur.png)
+   <img src="output/preprocessing_test/image_preprocessing/07_gaussian_blur.png" alt="Gaussian Blur" width="600">
 
 9. **Non-local Means Denoising**: Advanced noise reduction
-   ![Denoised](output/preprocessing_test/image_preprocessing/08_denoised.png)
+   <img src="output/preprocessing_test/image_preprocessing/08_denoised.png" alt="Denoised" width="600">
 
 10. **Morphology Closing**: Dilation followed by erosion (fills gaps)
-    ![Morphology Closing](output/preprocessing_test/image_preprocessing/09_morphology_closing.png)
+    <img src="output/preprocessing_test/image_preprocessing/09_morphology_closing.png" alt="Morphology Closing" width="600">
 
 11. **Morphology Opening**: Erosion followed by dilation (removes noise)
-    ![Morphology Opening](output/preprocessing_test/image_preprocessing/10_morphology_opening.png)
+    <img src="output/preprocessing_test/image_preprocessing/10_morphology_opening.png" alt="Morphology Opening" width="600">
 
 12. **CLAHE + OTSU**: CLAHE preprocessing followed by OTSU thresholding
-    ![CLAHE + OTSU](output/preprocessing_test/image_preprocessing/11_clahe_otsu.png)
+    <img src="output/preprocessing_test/image_preprocessing/11_clahe_otsu.png" alt="CLAHE + OTSU" width="600">
 
 13. **Denoised + OTSU**: Denoising followed by OTSU thresholding
-    ![Denoised + OTSU](output/preprocessing_test/image_preprocessing/12_denoised_otsu.png)
+    <img src="output/preprocessing_test/image_preprocessing/12_denoised_otsu.png" alt="Denoised + OTSU" width="600">
 
 14. **Histogram Equalization + OTSU**: Histogram equalization followed by OTSU thresholding
-    ![Histogram Equalization + OTSU](output/preprocessing_test/image_preprocessing/13_hist_eq_otsu.png)
+    <img src="output/preprocessing_test/image_preprocessing/13_hist_eq_otsu.png" alt="Histogram Equalization + OTSU" width="600">
 
 **Selected Preprocessing Methods**:
 
@@ -405,22 +405,22 @@ The logic was corrected to: `white_ratio > threshold = light` (inverted).
 After fixing the Morphology Closing logic, all three methods achieve **100% agreement**:
 
 - **Test Image 1 (20161209-6.png)**:
-  - Dark bars: 10개
-  - Light bars: 6개
-  - High confidence (3/3): 16개 (100%)
-  - Medium confidence: 0개
-  - Low confidence: 0개
+  - Dark bars: 10
+  - Light bars: 6
+  - High confidence (3/3): 16 (100%)
+  - Medium confidence: 0
+  - Low confidence: 0
 
-![Bar Classification Results 1](output/preprocessing_test/20161209-6_bar_classification.png)
+<img src="output/preprocessing_test/20161209-6_bar_classification.png" alt="Bar Classification Results 1" width="600">
 
 - **Test Image 2 (20161216-6.png)**:
-  - Dark bars: 10개
-  - Light bars: 6개
-  - High confidence (3/3): 16개 (100%)
-  - Medium confidence: 0개
-  - Low confidence: 0개
+  - Dark bars: 10
+  - Light bars: 6
+  - High confidence (3/3): 16 (100%)
+  - Medium confidence: 0
+  - Low confidence: 0
 
-![Bar Classification Results 2](output/preprocessing_test/20161216-6_bar_classification.png)
+<img src="output/preprocessing_test/20161216-6_bar_classification.png" alt="Bar Classification Results 2" width="600">
 
 **Key Findings**:
 
