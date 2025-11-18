@@ -12,7 +12,6 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.service.cloudflare import upload_to_cloud
 from src.service.csv_storage import get_last_date_from_csv as get_last_date_from_csv_storage
 
 # Project root based paths
@@ -80,11 +79,6 @@ def download_factset_pdfs(
                         # Save locally
                         with open(filename, 'wb') as f:
                             f.write(content)
-                        
-                        # Upload to cloud
-                        cloud_path = f"reports/{filename.name}"
-                        if upload_to_cloud(filename, cloud_path):
-                            print(f"   ☁️  Uploaded to R2: {cloud_path}")
                         
                         found_pdfs.append({
                             'date': current.strftime("%Y-%m-%d"),

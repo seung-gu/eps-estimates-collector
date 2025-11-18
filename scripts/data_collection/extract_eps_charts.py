@@ -9,7 +9,6 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.service.cloudflare import upload_to_cloud
 from src.service.csv_storage import get_last_date_from_csv as get_last_date_from_csv_storage
 
 # Project root based paths
@@ -108,11 +107,6 @@ def main() -> None:
                         
                         # Save high-resolution image
                         target_page.to_image(resolution=300).save(str(output_path))
-                        
-                        # Upload to cloud
-                        cloud_path = f"estimates/{output_path.name}"
-                        if upload_to_cloud(output_path, cloud_path):
-                            print(f"   ☁️  Uploaded to R2: {cloud_path}")
                         
                         print(f"✅ {report_date:12s} Page {target_page_num:2d} -> {output_path.relative_to(PROJECT_ROOT)}")
                         extracted += 1
