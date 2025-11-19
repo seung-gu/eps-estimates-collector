@@ -1,6 +1,8 @@
-# FactSet Data Collector
+# EPS Estimates Collector
 
-A unified Python package for extracting quarterly EPS (Earnings Per Share) estimates from FactSet Earnings Insight reports using OCR and image processing techniques.
+A Python package for extracting quarterly EPS (Earnings Per Share) estimates from financial reports using OCR and image processing techniques.
+
+> **⚠️ Disclaimer**: This package is for **educational and research purposes only**. For production use, please use [FactSet's official API](https://developer.factset.com/). This package processes publicly available PDF reports and is not affiliated with or endorsed by FactSet.
 
 ## Overview
 
@@ -10,13 +12,13 @@ This project processes chart images containing S&P 500 quarterly EPS data and ex
 
 Financial data providers (FactSet, Bloomberg, Investing.com, etc.) typically offer historical EPS data as **actual values**—once a quarter's earnings are reported, the estimate is overwritten with the actual figure. This creates a challenge for backtesting predictive models: using historical data means testing against information that was already reflected in stock prices at the time, making it difficult to evaluate the true predictive power of EPS estimates.
 
-To address this, this project extracts **point-in-time EPS estimates** from historical FactSet Earnings Insight reports. By preserving the estimates as they appeared at each report date (before actual earnings were announced), a dataset can be built that accurately reflects what was known and expected at each point in time, enabling more meaningful backtesting and predictive analysis.
+To address this, this project extracts **point-in-time EPS estimates** from historical earnings insight reports. By preserving the estimates as they appeared at each report date (before actual earnings were announced), a dataset can be built that accurately reflects what was known and expected at each point in time, enabling more meaningful backtesting and predictive analysis.
 
 ## Project Structure
 
 ```
-factset-data-collector/
-├── src/factset_data_collector/
+eps-estimates-collector/
+├── src/eps_estimates_collector/
 │   ├── core/                        # Data collection
 │   │   ├── downloader.py            # PDF download
 │   │   ├── extractor.py             # Chart extraction
@@ -38,26 +40,16 @@ factset-data-collector/
 
 ## Installation
 
-### Option 1: Install from Git (Recommended)
-```bash
-# Install with uv
-uv pip install git+https://github.com/seung-gu/factset-data-collector.git
+Install from PyPI:
 
-# Or with pip
-pip install git+https://github.com/seung-gu/factset-data-collector.git
+```bash
+pip install eps-estimates-collector
 ```
 
-### Option 2: Local Development
+Or with `uv`:
+
 ```bash
-# Clone repository
-git clone https://github.com/seung-gu/factset-data-collector.git
-cd factset-data-collector
-
-# Install with uv
-uv sync
-
-# Or install in editable mode
-uv pip install -e .
+uv pip install eps-estimates-collector
 ```
 
 ### Requirements
@@ -76,7 +68,7 @@ uv pip install -e .
 ### Python API
 
 ```python
-from factset_data_collector import calculate_pe_ratio
+from eps_estimates_collector import calculate_pe_ratio
 
 # Calculate P/E ratios (auto-loads CSV from public URL)
 pe_df = calculate_pe_ratio(
@@ -117,7 +109,7 @@ print(pe_df)
 │  Python Script                                                   │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  from factset_data_collector import calculate_pe_ratio           │
+│  from eps_estimates_collector import calculate_pe_ratio           │
 │                                                                  │
 │  pe_df = calculate_pe_ratio(                                     │
 │      price_data={'2024-01-15': 150.5},                           │
@@ -209,7 +201,7 @@ CI=true
 | 2016-12-09  | 24.89 | 26.23 | 27.45 | ... |
 | 2016-12-16  | 24.89 | 26.25 | 27.48 | ... |
 
-- **Report_Date**: FactSet report date (YYYY-MM-DD)
+- **Report_Date**: Report date (YYYY-MM-DD)
 - **Quarters**: EPS estimates in dollars
 - **Public URL**: `https://pub-62707afd3ebb422aae744c63c49d36a0.r2.dev/extracted_estimates.csv`
 
@@ -235,7 +227,7 @@ Calculate P/E ratios from EPS estimates.
 
 **Example:**
 ```python
-from factset_data_collector import calculate_pe_ratio
+from eps_estimates_collector import calculate_pe_ratio
 
 pe_df = calculate_pe_ratio(
     price_data={'2024-01-15': 150.5},
@@ -292,12 +284,27 @@ R2_SECRET_ACCESS_KEY
 
 See [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md) for detailed technical documentation.
 
+## Legal Disclaimer
+
+**This package is provided for educational and research purposes only.**
+
+- This package processes publicly available PDF reports from FactSet's website
+- The data extraction and processing methods are implemented for academic research
+- **This package is NOT affiliated with, endorsed by, or sponsored by FactSet**
+- **For production use, please use [FactSet's official API](https://developer.factset.com/)**
+
+**No Warranty**: This software is provided "as is" without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement.
+
+**Limitation of Liability**: In no event shall the authors or copyright holders be liable for any claim, damages, or other liability arising from the use of this software.
+
+**Data Usage**: Users are responsible for ensuring compliance with FactSet's terms of service and any applicable data usage agreements when using this package.
+
 ## License
 
-Educational and research purposes only.
+MIT License - See [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
-- FactSet (Earnings Insight reports)
+- FactSet (Earnings Insight reports) - [Official FactSet API](https://developer.factset.com/)
 - Google Cloud Vision API
 - Cloudflare R2

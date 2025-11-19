@@ -10,7 +10,7 @@ import tempfile
 
 import pandas as pd
 
-from src.factset_data_collector.utils.csv_storage import read_csv
+from src.eps_estimates_collector.utils.csv_storage import read_csv
 
 
 def _parse_quarter_to_date(quarter_str: str) -> datetime | None:

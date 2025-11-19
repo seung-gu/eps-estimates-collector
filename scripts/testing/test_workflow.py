@@ -34,7 +34,7 @@ class TestImports:
         """Test core function imports."""
         # Use absolute import with explicit path handling
         try:
-            from src.factset_data_collector import download_pdfs, extract_charts, process_images
+            from src.eps_estimates_collector import download_pdfs, extract_charts, process_images
             assert callable(download_pdfs)
             assert callable(extract_charts)
             assert callable(process_images)
@@ -44,7 +44,7 @@ class TestImports:
     def test_utils_imports(self):
         """Test utility function imports."""
         try:
-            from src.factset_data_collector.utils.cloudflare import (
+            from src.eps_estimates_collector.utils.cloudflare import (
                 CLOUD_STORAGE_ENABLED,
                 list_cloud_files,
                 upload_to_cloud,
@@ -58,7 +58,7 @@ class TestImports:
     def test_analysis_imports(self):
         """Test analysis function imports."""
         try:
-            from src.factset_data_collector import calculate_pe_ratio
+            from src.eps_estimates_collector import calculate_pe_ratio
             assert callable(calculate_pe_ratio)
         except ImportError as e:
             pytest.fail(f"Analysis import failed: {e}\nPROJECT_ROOT: {PROJECT_ROOT}\nsys.path: {sys.path[:5]}")
@@ -69,12 +69,12 @@ class TestCloudStorageConfig:
     
     def test_cloud_storage_enabled(self):
         """Test cloud storage enabled status."""
-        from src.factset_data_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
+        from src.eps_estimates_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
         assert isinstance(CLOUD_STORAGE_ENABLED, bool)
     
     def test_r2_credentials(self):
         """Test R2 credentials are set (if cloud storage enabled)."""
-        from src.factset_data_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
+        from src.eps_estimates_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
         
         if CLOUD_STORAGE_ENABLED:
             r2_vars = {
@@ -94,7 +94,7 @@ class TestCloudStorageConfig:
         
         # Either CI=true or CLOUD_STORAGE_ENABLED=true should enable cloud storage
         if ci_env == 'true' or cloud_enabled == 'true':
-            from src.factset_data_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
+            from src.eps_estimates_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
             assert CLOUD_STORAGE_ENABLED, "Cloud storage should be enabled in CI environment"
 
 
@@ -117,7 +117,7 @@ class TestGoogleCredentials:
             pytest.skip("Google Cloud credentials not configured")
         
         try:
-            from src.factset_data_collector.core.ocr.google_vision_processor import get_google_vision_client
+            from src.eps_estimates_collector.core.ocr.google_vision_processor import get_google_vision_client
             client = get_google_vision_client()
             assert client is not None, "Google Cloud Vision client should not be None"
         except Exception as e:
@@ -188,8 +188,8 @@ class TestDirectoryStructure:
     
     def test_src_directory(self):
         """Test src directory exists."""
-        src_dir = PROJECT_ROOT / "src" / "factset_data_collector"
-        assert src_dir.exists(), "src/factset_data_collector/ directory should exist"
+        src_dir = PROJECT_ROOT / "src" / "eps_estimates_collector"
+        assert src_dir.exists(), "src/eps_estimates_collector/ directory should exist"
     
     def test_actions_directory(self):
         """Test actions directory exists."""
@@ -202,7 +202,7 @@ class TestWorkflowIntegration:
     
     def test_download_pdfs_signature(self):
         """Test download_pdfs function signature."""
-        from src.factset_data_collector import download_pdfs
+        from src.eps_estimates_collector import download_pdfs
         import inspect
         
         sig = inspect.signature(download_pdfs)
@@ -212,7 +212,7 @@ class TestWorkflowIntegration:
     
     def test_extract_charts_signature(self):
         """Test extract_charts function signature."""
-        from src.factset_data_collector import extract_charts
+        from src.eps_estimates_collector import extract_charts
         import inspect
         
         sig = inspect.signature(extract_charts)
@@ -222,7 +222,7 @@ class TestWorkflowIntegration:
     
     def test_process_images_signature(self):
         """Test process_images function signature."""
-        from src.factset_data_collector import process_images
+        from src.eps_estimates_collector import process_images
         import inspect
         
         sig = inspect.signature(process_images)

@@ -1,4 +1,4 @@
-name: FactSet Data Collection
+name: EPS Estimates Collection
 
 on:
   schedule:

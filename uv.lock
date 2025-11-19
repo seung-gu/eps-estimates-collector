@@ -395,7 +395,7 @@ wheels = [
 ]
 
 [[package]]
-name = "factset-data-collector"
+name = "eps-estimates-collector"
 version = "0.2.0"
 source = { editable = "." }
 dependencies = [

@@ -1,8 +1,23 @@
 [project]
-name = "factset-data-collector"
+name = "eps-estimates-collector"
 version = "0.2.0"
-description = "Extract quarterly EPS estimates from FactSet Earnings Insight reports"
+description = "Extract quarterly EPS estimates from FactSet Earnings Insight reports using OCR"
+readme = "README.md"
 requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Seung-Gu Kang", email = "seunggu.kang.kr@gmail.com"},
+]
+keywords = ["eps", "earnings", "ocr", "financial-data", "pe-ratio", "estimates"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial",
+]
 dependencies = [
     "boto3>=1.28.0",
     "google-cloud-vision>=3.11.0",
@@ -21,7 +36,7 @@ dependencies = [
 dev = ["pytest>=7.4.0", "pytest-cov>=4.1.0"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/factset_data_collector"]
+packages = ["src/eps_estimates_collector"]
 
 [build-system]
 requires = ["hatchling"]

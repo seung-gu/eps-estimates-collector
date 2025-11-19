@@ -1,4 +1,4 @@
-"""Test package for factset-data-collector."""
+"""Test package for eps-estimates-collector."""
 
 # Ensure project root is in path
 import sys

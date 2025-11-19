@@ -7,8 +7,8 @@ from pathlib import Path
 import cv2
 import pandas as pd
 
-from src.factset_data_collector.utils.csv_storage import read_csv
-from src.factset_data_collector.utils.cloudflare import read_csv_from_cloud
+from src.eps_estimates_collector.utils.csv_storage import read_csv
+from src.eps_estimates_collector.utils.cloudflare import read_csv_from_cloud
 from .bar_classifier import classify_all_bars
 from .coordinate_matcher import match_quarters_with_numbers
 from .google_vision_processor import extract_text_from_image, extract_text_with_boxes

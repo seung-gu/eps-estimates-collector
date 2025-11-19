@@ -3,8 +3,8 @@
 import cv2
 import numpy as np
 from pathlib import Path
-from src.factset_data_collector.core.ocr.google_vision_processor import extract_text_with_boxes
-from src.factset_data_collector.core.ocr.coordinate_matcher import match_quarters_with_numbers
+from src.eps_estimates_collector.core.ocr.google_vision_processor import extract_text_with_boxes
+from src.eps_estimates_collector.core.ocr.coordinate_matcher import match_quarters_with_numbers
 
 
 def apply_preprocessing_to_bar(image: np.ndarray, q_box: dict, num_box: dict) -> dict:

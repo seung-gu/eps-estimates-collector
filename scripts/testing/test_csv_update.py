@@ -9,7 +9,7 @@ from unittest.mock import patch, MagicMock
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.factset_data_collector.core.ocr.processor import process_directory
+from src.eps_estimates_collector.core.ocr.processor import process_directory
 
 
 def test_existing_data_preserved():
@@ -41,7 +41,7 @@ def test_existing_data_preserved():
             'bar_confidence': 'high'
         }]
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         def read_side_effect(path):
             if path == 'extracted_estimates.csv':
                 return existing_main.copy()
@@ -55,7 +55,7 @@ def test_existing_data_preserved():
         test_image = test_dir / '20161223-6.png'
         test_image.touch()
         
-        with patch('src.factset_data_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
+        with patch('src.eps_estimates_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
             main_df, conf_df = process_directory(test_dir)
         
         assert len(main_df) == 3, f"Expected 3 records, got {len(main_df)}"
@@ -94,14 +94,14 @@ def test_confidence_without_bar_confidence():
             # bar_confidence 없음
         }]
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         mock_read.return_value = None
         
         test_dir = Path(tempfile.mkdtemp())
         test_image = test_dir / '20161223-6.png'
         test_image.touch()
         
-        with patch('src.factset_data_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
+        with patch('src.eps_estimates_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
             main_df, conf_df = process_directory(test_dir)
         
         # bar_confidence 없으면 bar_score=0, 하지만 consistency_score는 계산됨
@@ -139,14 +139,14 @@ def test_confidence_with_bar_confidence():
             'bar_confidence': 'high'
         }]
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         mock_read.return_value = None
         
         test_dir = Path(tempfile.mkdtemp())
         test_image = test_dir / '20161223-6.png'
         test_image.touch()
         
-        with patch('src.factset_data_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
+        with patch('src.eps_estimates_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
             main_df, conf_df = process_directory(test_dir)
         
         # bar_confidence 있으면 confidence > 0이어야 함
@@ -179,7 +179,7 @@ def test_date_matching_failure():
             'bar_confidence': 'high'
         }]
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         def read_side_effect(path):
             if path == 'extracted_estimates.csv':
                 return existing_main.copy()
@@ -191,7 +191,7 @@ def test_date_matching_failure():
         test_image = test_dir / '20161223-6.png'
         test_image.touch()
         
-        with patch('src.factset_data_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
+        with patch('src.eps_estimates_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
             main_df, conf_df = process_directory(test_dir)
         
         # 날짜 매칭이 실패하면 confidence는 0이거나 경고가 있어야 함
@@ -215,7 +215,7 @@ def test_multiple_images_same_date():
             'bar_confidence': 'high'
         }]
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         mock_read.return_value = None
         
         test_dir = Path(tempfile.mkdtemp())
@@ -224,7 +224,7 @@ def test_multiple_images_same_date():
         test_image1.touch()
         test_image2.touch()
         
-        with patch('src.factset_data_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
+        with patch('src.eps_estimates_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
             main_df, conf_df = process_directory(test_dir)
         
         # 같은 날짜면 하나만 남아야 함 (keep='last')
@@ -241,16 +241,16 @@ def test_empty_results():
     def mock_process_image(image_path):
         return []  # 빈 결과
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
-        existing_main = pd.DataFrame({
-            'Report_Date': ['2016-12-09'],
-            'Q1\'14': [27.85]
-        })
-        existing_confidence = pd.DataFrame({
-            'Report_Date': ['2016-12-09'],
-            'Confidence': [85.5]
-        })
-        
+    existing_main = pd.DataFrame({
+        'Report_Date': ['2016-12-09'],
+        'Q1\'14': [27.85]
+    })
+    existing_confidence = pd.DataFrame({
+        'Report_Date': ['2016-12-09'],
+        'Confidence': [85.5]
+    })
+    
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         def read_side_effect(path):
             if path == 'extracted_estimates.csv':
                 return existing_main.copy()
@@ -264,7 +264,7 @@ def test_empty_results():
         test_image = test_dir / '20161223-6.png'
         test_image.touch()
         
-        with patch('src.factset_data_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
+        with patch('src.eps_estimates_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
             main_df, conf_df = process_directory(test_dir)
         
         # 빈 결과여도 기존 데이터는 유지되어야 함
@@ -292,7 +292,7 @@ def test_confidence_merge_with_existing():
             'bar_confidence': 'high'
         }]
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         def read_side_effect(path):
             if path == 'extracted_estimates.csv':
                 return pd.DataFrame({'Report_Date': ['2016-12-09'], 'Q1\'14': [27.85]})
@@ -306,7 +306,7 @@ def test_confidence_merge_with_existing():
         test_image = test_dir / '20161223-6.png'
         test_image.touch()
         
-        with patch('src.factset_data_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
+        with patch('src.eps_estimates_collector.core.ocr.processor.process_image', side_effect=mock_process_image):
             main_df, conf_df = process_directory(test_dir)
         
         # 기존 confidence + 새 confidence 모두 있어야 함
@@ -332,7 +332,7 @@ def test_both_csvs_returned():
         'Confidence': [85.5]
     })
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         def read_side_effect(path):
             if path == 'extracted_estimates.csv':
                 return existing_main.copy()
@@ -358,7 +358,7 @@ def test_both_csvs_returned():
 def test_empty_cloud_handling():
     """Test handling when cloud CSV doesn't exist."""
     
-    with patch('src.factset_data_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
+    with patch('src.eps_estimates_collector.core.ocr.processor.read_csv_from_cloud') as mock_read:
         mock_read.return_value = None
         
         test_dir = Path(tempfile.mkdtemp())

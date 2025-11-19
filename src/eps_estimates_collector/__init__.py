@@ -1,4 +1,4 @@
-"""FactSet Data Collector - Unified API for collecting and analyzing FactSet data.
+"""EPS Estimates Collector - Unified API for collecting and analyzing EPS estimates.
 
 This package provides a comprehensive toolkit for:
 - Downloading FactSet Earnings Insight PDFs
@@ -7,7 +7,7 @@ This package provides a comprehensive toolkit for:
 - Calculating P/E ratios from EPS estimates
 
 Example:
-    >>> from factset_data_collector import download_pdfs, extract_charts, process_images, calculate_pe_ratio
+    >>> from eps_estimates_collector import download_pdfs, extract_charts, process_images, calculate_pe_ratio
     >>> from datetime import datetime
     >>> from pathlib import Path
     >>> 

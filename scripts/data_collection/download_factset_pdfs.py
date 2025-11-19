@@ -3,7 +3,7 @@ CLI wrapper for downloading FactSet Earnings Insight PDFs.
 
 This script provides a command-line interface to download PDFs from FactSet.
 For programmatic use, import from the main package:
-    from factset_data_collector import download_pdfs
+    from eps_estimates_collector import download_pdfs
 """
 import sys
 from datetime import datetime
@@ -13,7 +13,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.factset_data_collector import download_pdfs
+from src.eps_estimates_collector import download_pdfs
 
 
 def main() -> None:

@@ -1,8 +1,8 @@
 """Test script for coordinate-based matching."""
 
 from pathlib import Path
-from src.factset_data_collector.core.ocr.google_vision_processor import extract_text_with_boxes
-from src.factset_data_collector.core.ocr.coordinate_matcher import (
+from src.eps_estimates_collector.core.ocr.google_vision_processor import extract_text_with_boxes
+from src.eps_estimates_collector.core.ocr.coordinate_matcher import (
     match_quarters_with_numbers,
     find_quarters_at_bottom,
     find_nearest_number_in_y_range,

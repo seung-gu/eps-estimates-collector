@@ -17,8 +17,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.factset_data_collector import download_pdfs, extract_charts, process_images
-from src.factset_data_collector.utils import (
+from src.eps_estimates_collector import download_pdfs, extract_charts, process_images
+from src.eps_estimates_collector.utils import (
     CLOUD_STORAGE_ENABLED,
     list_cloud_files,
     upload_to_cloud,
@@ -29,7 +29,7 @@ import pandas as pd
 def main():
     """Run complete data collection workflow."""
     print("=" * 80)
-    print("🚀 FactSet Data Collection Workflow")
+    print("🚀 EPS Estimates Collection Workflow")
     print("=" * 80)
     print()
     
@@ -46,7 +46,7 @@ def main():
     # Get last date from public URL CSV
     last_date = None
     try:
-        from src.factset_data_collector.utils.cloudflare import read_csv_from_cloud
+        from src.eps_estimates_collector.utils.cloudflare import read_csv_from_cloud
         
         # Read directly from public URL
         df = read_csv_from_cloud("extracted_estimates.csv")
@@ -106,9 +106,9 @@ def main():
         download_start_date = datetime(2016, 1, 1)
         print(f"📅 No existing data found. Starting from: {download_start_date.strftime('%Y-%m-%d')}")
     
-    # Download new PDFs from FactSet
+    # Download new PDFs
     print("-" * 80)
-    print(" 📥 Step 2: Downloading new PDFs from FactSet...")
+    print(" 📥 Step 2: Downloading new PDFs...")
     
     import tempfile
     
@@ -170,7 +170,7 @@ def main():
             
             print(f"✅ Uploaded {len(pdf_files)} PDF(s), {len(chart_files)} PNG(s)")
             
-            from src.factset_data_collector.utils.cloudflare import write_csv_to_cloud
+            from src.eps_estimates_collector.utils.cloudflare import write_csv_to_cloud
             
             if not write_csv_to_cloud(df_main, "extracted_estimates.csv"):
                 raise Exception("Failed to upload extracted_estimates.csv")

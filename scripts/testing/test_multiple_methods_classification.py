@@ -2,9 +2,9 @@
 
 import cv2
 from pathlib import Path
-from src.factset_data_collector.core.ocr.google_vision_processor import extract_text_with_boxes
-from src.factset_data_collector.core.ocr.coordinate_matcher import match_quarters_with_numbers
-from src.factset_data_collector.core.ocr.bar_classifier import classify_all_bars
+from src.eps_estimates_collector.core.ocr.google_vision_processor import extract_text_with_boxes
+from src.eps_estimates_collector.core.ocr.coordinate_matcher import match_quarters_with_numbers
+from src.eps_estimates_collector.core.ocr.bar_classifier import classify_all_bars
 
 
 def test_multiple_methods():
