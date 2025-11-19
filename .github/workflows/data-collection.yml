@@ -27,7 +27,7 @@ jobs:
           python-version: "3.11"
       
       - name: Install dependencies
-        run: uv sync --extra r2
+        run: uv sync
       
       - name: Configure Google Cloud credentials
         run: |

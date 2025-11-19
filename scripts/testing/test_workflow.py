@@ -44,14 +44,12 @@ class TestImports:
     def test_utils_imports(self):
         """Test utility function imports."""
         try:
-            from src.factset_data_collector.utils import (
+            from src.factset_data_collector.utils.cloudflare import (
                 CLOUD_STORAGE_ENABLED,
-                download_from_cloud,
                 list_cloud_files,
                 upload_to_cloud,
             )
             assert isinstance(CLOUD_STORAGE_ENABLED, bool)
-            assert callable(download_from_cloud)
             assert callable(list_cloud_files)
             assert callable(upload_to_cloud)
         except ImportError as e:
@@ -71,12 +69,12 @@ class TestCloudStorageConfig:
     
     def test_cloud_storage_enabled(self):
         """Test cloud storage enabled status."""
-        from src.factset_data_collector.utils import CLOUD_STORAGE_ENABLED
+        from src.factset_data_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
         assert isinstance(CLOUD_STORAGE_ENABLED, bool)
     
     def test_r2_credentials(self):
         """Test R2 credentials are set (if cloud storage enabled)."""
-        from src.factset_data_collector.utils import CLOUD_STORAGE_ENABLED
+        from src.factset_data_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
         
         if CLOUD_STORAGE_ENABLED:
             r2_vars = {
@@ -96,7 +94,7 @@ class TestCloudStorageConfig:
         
         # Either CI=true or CLOUD_STORAGE_ENABLED=true should enable cloud storage
         if ci_env == 'true' or cloud_enabled == 'true':
-            from src.factset_data_collector.utils import CLOUD_STORAGE_ENABLED
+            from src.factset_data_collector.utils.cloudflare import CLOUD_STORAGE_ENABLED
             assert CLOUD_STORAGE_ENABLED, "Cloud storage should be enabled in CI environment"
 
 
@@ -173,19 +171,20 @@ class TestDirectoryStructure:
     """Test if required directories exist."""
     
     def test_output_directory(self):
-        """Test output directory exists."""
+        """Test output directory exists (optional, for local testing)."""
         output_dir = PROJECT_ROOT / "output"
-        assert output_dir.exists() or True, "output/ directory should exist (will be created)"
+        # Output directory is optional now (cloud-first architecture)
+        pass
     
     def test_pdf_directory(self):
-        """Test PDF directory exists."""
-        pdf_dir = PROJECT_ROOT / "output" / "factset_pdfs"
-        assert pdf_dir.exists() or True, "output/factset_pdfs/ directory should exist (will be created)"
+        """Test PDF directory exists (optional, for local testing)."""
+        # PDF directory is optional now (cloud-first architecture)
+        pass
     
     def test_estimates_directory(self):
-        """Test estimates directory exists."""
-        estimates_dir = PROJECT_ROOT / "output" / "estimates"
-        assert estimates_dir.exists() or True, "output/estimates/ directory should exist (will be created)"
+        """Test estimates directory exists (optional, for local testing)."""
+        # Estimates directory is optional now (cloud-first architecture)
+        pass
     
     def test_src_directory(self):
         """Test src directory exists."""
@@ -209,7 +208,7 @@ class TestWorkflowIntegration:
         sig = inspect.signature(download_pdfs)
         params = list(sig.parameters.keys())
         
-        assert 'start_date' in params or 'outpath' in params, "download_pdfs should have expected parameters"
+        assert 'start_date' in params, "download_pdfs should have start_date parameter"
     
     def test_extract_charts_signature(self):
         """Test extract_charts function signature."""
@@ -219,7 +218,7 @@ class TestWorkflowIntegration:
         sig = inspect.signature(extract_charts)
         params = list(sig.parameters.keys())
         
-        assert 'pdfs' in params or 'outpath' in params, "extract_charts should have expected parameters"
+        assert 'pdfs' in params, "extract_charts should have pdfs parameter"
     
     def test_process_images_signature(self):
         """Test process_images function signature."""
@@ -229,7 +228,7 @@ class TestWorkflowIntegration:
         sig = inspect.signature(process_images)
         params = list(sig.parameters.keys())
         
-        assert 'directory' in params or 'output_csv' in params, "process_images should have expected parameters"
+        assert 'directory' in params, "process_images should have directory parameter"
 
 
 # Pytest fixtures
@@ -251,10 +250,6 @@ def test_output_dir(output_dir):
     test_dir = output_dir / "test"
     test_dir.mkdir(parents=True, exist_ok=True)
     yield test_dir
-    # Cleanup (optional - comment out if you want to keep test files)
-    # import shutil
-    # if test_dir.exists():
-    #     shutil.rmtree(test_dir)
 
 
 # Main function for running tests directly

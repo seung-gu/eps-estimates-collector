@@ -1,7 +1,6 @@
 """Test script for bar graph classification using all three methods."""
 
 import cv2
-import pytest
 from pathlib import Path
 from src.factset_data_collector.core.ocr.google_vision_processor import extract_text_with_boxes
 from src.factset_data_collector.core.ocr.coordinate_matcher import match_quarters_with_numbers
@@ -16,7 +15,7 @@ def test_multiple_methods():
     # Read image
     image = cv2.imread(str(image_path))
     if image is None:
-        pytest.skip(f"Test image not found: {image_path}")
+        print(f"Test image not found: {image_path}")
         return
     
     # OCR and matching

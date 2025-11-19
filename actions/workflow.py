@@ -144,10 +144,11 @@ def main():
             print(f"✅ PNG extraction complete: {len(chart_data)} charts\n")
             
             # Save PNGs to temp files for processing
-            chart_files = [
-                (tmp_path / filename).write_bytes(image_bytes) or (tmp_path / filename)
-                for filename, image_bytes in chart_data
-            ]
+            chart_files = []
+            for filename, image_bytes in chart_data:
+                chart_path = tmp_path / filename
+                chart_path.write_bytes(image_bytes)
+                chart_files.append(chart_path)
             
             # Step 4: Process images
             print("-" * 80)

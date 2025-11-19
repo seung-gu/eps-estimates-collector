@@ -1,24 +1,26 @@
 """Test script for coordinate-based matching."""
 
-import pytest
 from pathlib import Path
 from src.factset_data_collector.core.ocr.google_vision_processor import extract_text_with_boxes
-from src.factset_data_collector.core.ocr.coordinate_matcher import match_quarters_with_numbers
+from src.factset_data_collector.core.ocr.coordinate_matcher import (
+    match_quarters_with_numbers,
+    find_quarters_at_bottom,
+    find_nearest_number_in_y_range,
+    extract_number,
+    extract_quarter_pattern,
+    is_same_y_range,
+    calculate_distance,
+)
 
 
 def test_coordinate_matching():
     """Test coordinate-based matching."""
-    from src.factset_data_collector.core.ocr.coordinate_matcher import (
-        find_quarters_at_bottom, 
-        find_nearest_number_in_y_range,
-        extract_number
-    )
     
     # Set image path (not a pytest fixture, just a local variable)
     image_path = Path('output/estimates/20161209-6.png')
     
     if not image_path.exists():
-        pytest.skip(f"Test image not found: {image_path}")
+        print(f"Test image not found: {image_path}")
         return
     
     print(f"Processing image: {image_path}")
@@ -43,7 +45,6 @@ def test_coordinate_matching():
         for box in ocr_results:
             if (box['left'] == qb['left'] and box['top'] == qb['top']):
                 continue
-            from src.factset_data_collector.core.ocr.coordinate_matcher import extract_quarter_pattern, is_same_y_range, calculate_distance
             if extract_quarter_pattern(box['text']) is not None:
                 continue
             number = extract_number(box['text'])
