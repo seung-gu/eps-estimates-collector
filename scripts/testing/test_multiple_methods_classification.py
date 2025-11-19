@@ -59,5 +59,4 @@ def test_multiple_methods():
 
 
 if __name__ == '__main__':
-    test_image = Path('output/estimates/20161209-6.png')
-    test_multiple_methods(test_image)
+    test_multiple_methods()

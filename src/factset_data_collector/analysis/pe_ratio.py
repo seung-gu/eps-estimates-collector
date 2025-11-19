@@ -27,9 +27,14 @@ def _parse_quarter_to_date(quarter_str: str) -> datetime | None:
     year_short = int(match.group(2))
     
     # Convert 2-digit year to 4-digit year
-    if year_short >= 14:
-        year = 2000 + year_short
+    # FactSet data starts from 2016, so all quarters are in 2000s
+    # Standard conversion: 00-49 -> 2000-2049, 50-99 -> 1950-1999
+    # For FactSet data (2014+), we use 2000+ for all cases
+    if year_short >= 50:
+        # Years 50-99: 1950-1999 (unlikely for FactSet data, but handle for completeness)
+        year = 1900 + year_short
     else:
+        # Years 00-49: 2000-2049 (covers all FactSet data from 2014+)
         year = 2000 + year_short
     
     # Calculate month (Q1=Jan, Q2=Apr, Q3=Jul, Q4=Oct)

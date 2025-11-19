@@ -1,4 +1,4 @@
-# Development Log / Research Journal
+# Development Log
 
 This document tracks the development journey, experiments, challenges, and decisions made during the development of the FactSet Data Collector.
 

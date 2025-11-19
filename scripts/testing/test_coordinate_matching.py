@@ -86,5 +86,4 @@ def test_coordinate_matching():
 
 
 if __name__ == '__main__':
-    test_image = Path('output/estimates/20161209-6.png')
-    test_coordinate_matching(test_image)
+    test_coordinate_matching()
