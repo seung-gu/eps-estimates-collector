@@ -19,8 +19,7 @@ This document tracks the development journey, experiments, challenges, and decis
 5. ✅ **Composite confidence score** combining internal reliability and external consistency
 
 ### Abandoned Approaches
-- ❌ OpenAI Vision API: Poor performance
-- ❌ Gemini Vision Model: Rate limiting issues
+- ❌ Agent Based Vision API: Poor performance and rate limiting issues
 - ❌ Tesseract OCR: Poor text detection accuracy
 - ❌ CRAFT + EasyOCR: Outperformed by Google Vision API
 
@@ -32,7 +31,7 @@ This document tracks the development journey, experiments, challenges, and decis
 
 | Phase | Approach | Status | Result |
 |-------|----------|--------|--------|
-| **Phase 1** | Cloud Vision APIs (OpenAI, Gemini) | ❌ Abandoned | Rate limiting, poor performance |
+| **Phase 1** | Agent Based Vision API | ❌ Abandoned | Rate limiting, poor performance |
 | **Phase 2** | Tesseract OCR | ❌ Abandoned | Poor text detection (141 regions) |
 | **Phase 3** | CRAFT + EasyOCR | ⚠️ Research | Better detection (125 regions) but outperformed |
 | **Phase 4** | Google Cloud Vision API | ✅ **Final** | Best performance (149 regions) |
@@ -43,25 +42,25 @@ This document tracks the development journey, experiments, challenges, and decis
 
 ---
 
-## Phase 1: Cloud-based Vision API Experiments
+## Phase 1: Agent Based Vision API Experiments
 
 <details>
-<summary><strong>Summary</strong>: Tested OpenAI and Gemini Vision APIs. Both abandoned due to rate limiting and performance issues.</summary>
+<summary><strong>Summary</strong>: Tested Agent Based Vision APIs (GPT-4 Vision, Gemini Pro Vision). Both abandoned due to rate limiting and performance issues.</summary>
 
-### Attempt 1: OpenAI Vision API
+### Attempt 1: Agent Based Vision API (GPT-4 Vision)
 - **Date**: Initial exploration
-- **Approach**: Used OpenAI's vision model for text extraction from chart images
+- **Approach**: Used Agent Based Vision API (GPT-4 Vision) for text extraction from chart images
 - **Results**: 
   - Performance was unsatisfactory
   - The model struggled to accurately identify and extract quarter labels (Q1'14, Q2'15, etc.) and EPS values
   - Low accuracy in matching quarter labels with their corresponding values
 - **Decision**: ❌ Abandoned due to poor performance
 
-### Attempt 2: Gemini Vision Model
-- **Date**: After OpenAI Vision API
-- **Approach**: Tested Google's Gemini Vision model as an alternative
+### Attempt 2: Agent Based Vision API (Gemini Pro Vision)
+- **Date**: After GPT-4 Vision
+- **Approach**: Tested Agent Based Vision API (Gemini Pro Vision) as an alternative
 - **Results**:
-  - Showed better results compared to OpenAI Vision
+  - Showed better results compared to GPT-4 Vision
   - Better accuracy in text recognition
 - **Challenges**:
   - Encountered significant rate limiting issues

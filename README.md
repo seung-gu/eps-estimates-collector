@@ -63,6 +63,104 @@ uv pip install eps-estimates-collector
   - For GitHub Actions workflow only
   - Automatically included via `boto3` dependency
 
+## Workflow Overview
+
+The complete workflow from PDF documents to final P/E ratio calculation:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    📄 Step 1: PDF Download                          │
+│                                                                     │
+│  FactSet Earnings Insight Reports                                   │
+│  └─> Download PDFs from FactSet website                             │
+│      (e.g., EarningsInsight_20251114_111425.pdf)                    │
+└─────────────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              🖼️  Step 2: EPS Chart Page Extraction                  │
+│                                                                     │
+│  PDF Document                                                       │
+│  └─> Extract EPS chart page (Page 6)                                │
+│      └─> Convert to PNG image                                       │
+│          (e.g., 20161209-6.png)                                     │
+└─────────────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              🔍 Step 3: OCR Processing & Data Extraction            │
+│                                                                     │
+│  Chart Image                                                        │
+│  ├─> Google Cloud Vision API (149 text regions detected)            │
+│  ├─> Coordinate-based matching (Q1'14 ↔ 27.85)                      │
+│  ├─> Bar classification (dark = actual, light = estimate)           │
+│  └─> Extract quarter labels and EPS values                          │
+│                                                                     │
+│  Output: CSV with quarterly EPS estimates                           │
+│  └─> extracted_estimates.csv                                        │
+└─────────────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              📊 Step 4: P/E Ratio Calculation                       │
+│                                                                     │
+│  EPS Estimates + S&P 500 Prices                                     │
+│  ├─> Load EPS data from public URL                                  │
+│  ├─> Load S&P 500 prices from yfinance (2016-12-09 to today)        │
+│  ├─> Calculate 4-quarter EPS sum (forward/mix/trailing-like)        │
+│  └─> Calculate P/E Ratio = Price / EPS_4Q_Sum                       │
+│                                                                     │
+│  Output: DataFrame with P/E ratios                                  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Visual Workflow
+
+**Step 1: PDF Document** → Downloads FactSet Earnings Insight PDF reports
+
+<table>
+<tr>
+<td width="50%">
+<strong>Step 2: EPS Chart Page Extraction</strong><br>
+<img src="output/preprocessing_test/20161209-6_original.png" alt="Original Chart" width="100%">
+</td>
+<td width="50%">
+<strong>Step 3: OCR Processing & Bar Classification</strong><br>
+<img src="output/preprocessing_test/20161209-6_bar_classification.png" alt="Bar Classification" width="100%">
+<small><em>Red bars = Actual values, Magenta bars = Estimates</em></small>
+</td>
+</tr>
+</table>
+
+**Step 4: P/E Ratio Calculation** → See example output below
+
+### Example: P/E Ratio Calculation Result
+
+```python
+from eps_estimates_collector import calculate_pe_ratio
+
+# Calculate trailing-like P/E ratios
+pe_df = calculate_pe_ratio('trailing-like')
+print(pe_df)
+```
+
+**Output:**
+```
+📈 Loading S&P 500 price data from yfinance (2016-12-09 to 2025-11-20)...
+✅ Loaded 2249 S&P 500 price points
+
+      Report_Date  Price_Date    Price  EPS_4Q_Sum  PE_Ratio         Type
+0      2016-12-09  2016-12-09  2249.69      122.28     18.40  trailing-like
+1      2016-12-09  2016-12-12  2257.48      122.28     18.46  trailing-like
+2      2016-12-09  2016-12-13  2271.72      122.28     18.58  trailing-like
+...
+2246   2025-11-07  2025-11-13  6600.00      278.30     23.72  trailing-like
+2247   2025-11-14  2025-11-14  6700.00      278.84     24.03  trailing-like
+2248   2025-11-14  2025-11-19  6700.00      278.84     24.03  trailing-like
+
+[2249 rows x 6 columns]
+```
+
 ## Usage
 
 ### Python API
@@ -106,7 +204,7 @@ print(pe_df)
 │  Python Script                                                   │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  from eps_estimates_collector import calculate_pe_ratio           │
+│  from eps_estimates_collector import calculate_pe_ratio          │
 │                                                                  │
 │  pe_df = calculate_pe_ratio(type='forward')                      │
 │     │                                                            │
