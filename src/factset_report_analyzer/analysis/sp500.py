@@ -146,7 +146,7 @@ class SP500:
         """Get all P/E ratio data based on current type setting.
         
         Returns:
-            DataFrame with Date, Price, EPS_4Q_Sum, PE_Ratio, Type
+            DataFrame with Date, Price, EPS, PE_Ratio, Type
             
         Example:
             >>> sp500 = SP500()
@@ -156,10 +156,10 @@ class SP500:
         """
         dates = self._price_df['Date']
         price_data = self._price_df.copy()
-        price_data['EPS_4Q_Sum'] = calculate_eps_sum(self._df_eps, dates, self._type)
-        price_data['PE_Ratio'] = price_data['Price'] / price_data['EPS_4Q_Sum']
+        price_data['EPS'] = calculate_eps_sum(self._df_eps, dates, self._type)
+        price_data['PE_Ratio'] = price_data['Price'] / price_data['EPS']
         price_data['Type'] = self._type
-        return price_data[['Date', 'Price', 'EPS_4Q_Sum', 'PE_Ratio', 'Type']].reset_index(drop=True)
+        return price_data[['Date', 'Price', 'EPS', 'PE_Ratio', 'Type']].reset_index(drop=True)
     
     @property
     def current_pe(self) -> dict:
@@ -175,7 +175,7 @@ class SP500:
         """
         pe_df = self.pe_ratio
         # Find last row with valid EPS
-        valid_df = pe_df.dropna(subset=['EPS_4Q_Sum'])
+        valid_df = pe_df.dropna(subset=['EPS'])
         if valid_df.empty:
             return None
         
@@ -183,7 +183,7 @@ class SP500:
         return {
             'date': latest['Date'],
             'price': latest['Price'],
-            'eps': latest['EPS_4Q_Sum'],
+            'eps': latest['EPS'],
             'pe_ratio': latest['PE_Ratio'],
             'type': latest['Type']
         }
@@ -199,7 +199,7 @@ class SP500:
             'eps': self._df_eps,
             'price': self._price_df
         }
-
+    
 
 def quarter_mapper(report_date: pd.Timestamp, start: int, end: int = 0) -> list[str]:
     """Map relative quarter positions to quarter column names.
@@ -473,10 +473,82 @@ def plot_pe_ratio_with_price(
     plt.close()
 
 
+def plot_time_series(
+    dates: pd.Series,
+    values: pd.Series | list[pd.Series],
+    sigma: float | None = None,
+    sigma_index: int = 0,
+    output_path: Path | None = None,
+    figsize: tuple[int, int] = (14, 8),
+    labels: list[str] | None = None,
+    colors: list[str] | None = None
+) -> None:
+    """Plot time series data with optional sigma threshold highlighting."""
+    if isinstance(values, pd.Series):
+        values = [values]
+    if len(values) > 2:
+        raise ValueError("Maximum 2 value series allowed")
+    
+    dates = pd.to_datetime(dates).values
+    colors = colors or ['blue', 'red'][:len(values)]
+    labels = labels or [v.name if v.name else f'Series {i+1}' for i, v in enumerate(values)]
+    
+    fig, ax = plt.subplots(figsize=figsize)
+    ax2 = ax.twinx() if len(values) == 2 else None
+    
+    # Sigma threshold regions
+    if sigma is not None:
+        if sigma_index < len(values):
+            v = values[sigma_index].values
+            mean, std = np.mean(v), np.std(v)
+            upper, lower = mean + sigma * std, mean - sigma * std
+            for mask, color in [(v > upper, 'red'), (v < lower, 'blue')]:
+                starts = np.where(np.diff(np.concatenate(([False], mask, [False]))))[0]
+                for i in range(0, len(starts), 2):
+                    if i+1 < len(starts):
+                        ax.axvspan(dates[starts[i]], dates[starts[i+1]-1], alpha=0.2, color=color, zorder=0)
+            for y, style in [(mean, '--'), (upper, ':'), (lower, ':')]:
+                ax.axhline(y=y, color='gray' if style == '--' else 'gold', linestyle=style, 
+                        linewidth=1.2, alpha=0.7, zorder=1)
+        else:
+            print(f"Sigma index {sigma_index} is out of range for {len(values)} values")
+    
+    # Plot series
+    for i, val in enumerate(values):
+        (ax2 if i == 1 else ax).plot(dates, val.values, color=colors[i], linewidth=1.5,
+                                     label=labels[i], alpha=0.7, zorder=2)
+    
+    ax.set_xlabel('Date', fontsize=11, fontweight='bold')
+    ax.set_ylabel(labels[0], fontsize=11, fontweight='bold', color=colors[0])
+    ax.tick_params(axis='y', labelsize=9, labelcolor=colors[0])
+    ax.grid(True, alpha=0.15, linestyle='-', linewidth=0.3)
+    if ax2:
+        ax2.set_ylabel(labels[1], fontsize=11, fontweight='bold', color=colors[1])
+        ax2.tick_params(axis='y', labelsize=9, labelcolor=colors[1])
+    
+    lines, lbls = ax.get_legend_handles_labels()
+    if ax2:
+        lines2, lbls2 = ax2.get_legend_handles_labels()
+        lines, lbls = lines + lines2, lbls + lbls2
+    ax.legend(lines, lbls, loc='upper left', fontsize=9, framealpha=0.9, edgecolor='lightgray')
+    
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    ax.xaxis.set_major_locator(mdates.YearLocator())
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, ha='center', fontsize=9)
+    plt.tight_layout()
+    
+    if output_path:
+        plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+        print(f"✅ Plot saved to {output_path}")
+    else:
+        plt.show()
+    plt.close()
+
+
 if __name__ == "__main__":
     # Example usage
     sp500 = SP500()
-    
+    sp500.peg_ratio
     print("Current P/E Ratio:")
     current = sp500.current_pe
     print(f"  Date: {current['date']}")
