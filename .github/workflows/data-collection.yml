@@ -47,4 +47,12 @@ jobs:
       
       - name: Run data collection workflow
         run: uv run python actions/workflow.py
+        
+  keepalive:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gautamkrishnar/keepalive-workflow@v2
 
