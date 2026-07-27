@@ -24,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.13"
       
       - name: Install dependencies
         run: uv sync
@@ -51,8 +51,10 @@ jobs:
   keepalive:
     runs-on: ubuntu-latest
     permissions:
-      actions: write
+      contents: write
     steps:
-      - uses: actions/checkout@v4
       - uses: efrecon/gh-action-keepalive@main
+        with:
+          # Default .github/.github_liveness.txt is blocked by the `.*` rule in .gitignore
+          liveness: .github/liveness.txt
 
